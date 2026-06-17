@@ -28,13 +28,6 @@ docker compose up --build
 # back  : http://localhost:3000/api/health
 ```
 
-Dev sans Docker:
-
-```bash
-cd backend && npm install && npm run dev
-cd frontend && npm install && npm run dev
-```
-
 ## Pipeline CI/CD
 
 Déclencheurs:
