@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    image: ${DOCKERHUB_USERNAME:-local}/cicd-backend:${TAG:-latest}
+    container_name: cicd-backend
+    environment:
+      - PORT=3000
+      - APP_VERSION=${TAG:-dev}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+    image: ${DOCKERHUB_USERNAME:-local}/cicd-frontend:${TAG:-latest}
+    container_name: cicd-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    restart: unless-stopped
