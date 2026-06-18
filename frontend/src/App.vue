@@ -15,7 +15,7 @@ onMounted(async () => {
   try {
     const r = await fetch('/api/health');
     health.value = await r.json();
-  } catch (e) {
+  } catch {
     health.value = { status: 'down' };
   }
 });

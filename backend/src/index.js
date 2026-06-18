@@ -15,6 +15,10 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from backend', version: process.env.APP_VERSION || 'dev' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend listening on :${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Backend listening on :${PORT}`);
+  });
+}
+
+module.exports = app;

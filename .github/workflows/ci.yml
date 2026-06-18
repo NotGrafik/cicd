@@ -13,8 +13,32 @@ env:
   FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend
 
 jobs:
-  build-test:
-    name: Build & Test
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.service }}/package-lock.json
+
+      - name: Install
+        working-directory: ${{ matrix.service }}
+        run: npm ci
+
+      - name: Lint
+        working-directory: ${{ matrix.service }}
+        run: npm run lint
+
+  test:
+    name: Test & Build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -45,7 +69,7 @@ jobs:
 
   docker-publish:
     name: Build, Push & Tag
-    needs: build-test
+    needs: [lint, test]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     permissions:
